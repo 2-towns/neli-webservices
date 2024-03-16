@@ -1,0 +1,57 @@
+
+# Gopkg.toml example
+#
+# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#  name = "github.com/x/y"
+#  version = "2.4.0"
+
+
+[[constraint]]
+  name = "github.com/DATA-DOG/go-sqlmock"
+  version = "1.3.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/badoux/checkmail"
+
+[[constraint]]
+  name = "github.com/dgrijalva/jwt-go"
+
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/icrowley/fake"
+
+[[constraint]]
+  name = "github.com/jmoiron/sqlx"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+
+[[constraint]]
+  name = "github.com/vharitonsky/iniflags"
+
+[[constraint]]
+  name = "golang.org/x/crypto"
+
+[metadata.heroku]
+  root-package = "gitlab.com/arnaud-web/neli-webservices"
+  go-version = "go1.9"
+  ensure = "true"

@@ -1,0 +1,32 @@
+{
+    "users": [
+        {
+            "userId": 2,
+            "email": "admin@neli.fr",
+            "password": "chameau_tomate",
+            "profile": "super_admin",
+            "firstname": "arnaud",
+            "lastname": "arnaud",
+            "password_rest_token": null
+        },
+        {
+            "userId": 1,
+            "email": "zombie@neli.fr",
+            "password": "password",
+            "firstname": "zombie",
+            "lastname": "zombie",
+            "profile": "leader"
+        },
+        {
+            "userId": 100,
+            "email": "hub@neli.com",
+            "password": "ketchup_salade",
+            "firstname": "hub",
+            "lastname": "hub",
+            "profile": "hub"
+        }
+    ],
+    "settings": {
+        "maxDuration": 3600
+    }
+}

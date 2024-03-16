@@ -1,0 +1,97 @@
+
+
+image: golang:1.9
+stages:
+  - test
+  - build
+  - deploy
+  
+  #- test
+
+before_script:
+  # Create folder project in GOPATH
+  - mkdir -p /go/src/gitlab.com/arnaud-web
+
+  # Export app path
+  - export APP_PATH="/go/src/gitlab.com/arnaud-web/neli-webservices"
+
+  # Link current build to GOPATH
+  - ln -s $PWD $APP_PATH
+
+  # Move to app path
+  - cd $APP_PATH
+
+  # Install dep 
+  - go get -u github.com/golang/dep/cmd/dep
+
+  # Install project dependencies
+  - dep ensure
+
+build:
+  stage: build
+  script:
+    # Make executable for linux
+    - env GOOS=linux GOARCH=amd64 go build
+  artifacts:
+    paths:
+    - neli-webservices
+
+deploy:
+  stage: deploy
+  script:
+    # Add heroku  repository
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/neli-webservices.git
+    
+    # Push and deploy to heroku
+    - git push heroku master
+
+test:
+  stage: test
+
+  script:
+      # Update dependencies
+    - apt-get update -y
+
+    # Setup nodejs
+    - curl -sL https://deb.nodesource.com/setup_8.x | bash -
+    
+    # Install nodejs
+    - apt-get install -y nodejs 
+
+    # Install newman
+    - npm install newman --global
+
+    # Install goose     
+    - go get -u github.com/pressly/goose/cmd/goose
+
+    # Make migrations
+    - goose --dir __resources__/migrations mysql "root:$STAGING_DATABASE@tcp(mysql:3306)/neli_webservices" up
+    
+    # Install mailhog
+    - go get github.com/mailhog/MailHog
+    
+    # Start mailhog and continue pipeline
+    - MailHog  & 
+
+    # Launch unit tests
+    - go test -cover ./...
+
+    # Fill database with data
+    - go run db/seeds/seeds.go --config ./ci.ini
+    
+    # Start server 
+    - go run ./main.go -config ./ci.ini &
+    
+    # Wait for server started
+    - sleep 3
+    
+    # Launch postman scenarios
+    - newman run __resources__/postman/neli.postman_collection.json -e __resources__/postman/local.postman_environment.json
+
+variables:
+  MYSQL_DATABASE: neli_webservices
+  MYSQL_ROOT_PASSWORD: $STAGING_DATABASE
+
+services:
+    - mysql:5.7
+    - diyan/mailhog

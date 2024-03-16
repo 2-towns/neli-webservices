@@ -1,0 +1,7 @@
+**/.DS_Store
+vendor
+__resources__/postman/local.postman_environment.json
+data/**
+docker.ini
+.env
+heroku.ini

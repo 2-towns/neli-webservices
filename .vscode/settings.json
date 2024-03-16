@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.gohtml": "html"
+    },
+    "files.exclude": {
+        ".git": true,
+        "vendor": true,
+        ".vscode": true
+    },
+    "go.liveErrors": {
+        "enabled": true,
+        "delay": 500
+    }
+}

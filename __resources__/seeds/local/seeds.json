@@ -1,0 +1,141 @@
+{
+    "users": [
+        {
+            "userId": 1,
+            "email": "arnaud@neli.com",
+            "password": "password",
+            "profile": "super_admin",
+            "firstName": "arnaud",
+            "lastName": "arnaud",
+            "password_rest_token": "passwordtoken"
+        },
+        {
+            "userId": 2,
+            "email": "admin@neli.com",
+            "password": "password",
+            "firstname": "admin",
+            "lastname": "admin",
+            "profile": "administrator"
+        },
+        {
+            "userId": 3,
+            "email": "leader@neli.com",
+            "password": "password",
+            "firstname": "leader",
+            "lastname": "leader",
+            "profile": "leader"
+        },
+        {
+            "userId": 4,
+            "email": "member@neli.com",
+            "password": "",
+            "firstname": "member",
+            "lastname": "member",
+            "profile": "member"
+        },
+        {
+            "userId": 5,
+            "email": "leader2@neli.com",
+            "password": "password",
+            "firstname": "leader2",
+            "lastname": "leader2",
+            "profile": "leader"
+        },
+        {
+            "userId": 6,
+            "email": "member2@neli.com",
+            "password": "",
+            "firstname": "member2",
+            "lastname": "member2",
+            "profile": "member"
+        },
+        {
+            "userId": 7,
+            "email": "member3@neli.com",
+            "password": "",
+            "firstname": "member3",
+            "lastname": "member3",
+            "profile": "member"
+        },
+        {
+            "userId": 99,
+            "email": "zombie@neli.com",
+            "profile": "leader",
+            "firstname": "zombie",
+            "lastname": "zombie"
+        },
+        {
+            "userId": 100,
+            "email": "hub@neli.com",
+            "password": "123456",
+            "firstname": "hub",
+            "lastname": "hub",
+            "profile": "hub"
+        }
+    ],
+    "tribes": [
+        {
+            "user_id": 4,
+            "leader_id": 3
+        },
+        {
+            "user_id": 6,
+            "leader_id": 3
+        },
+        {
+            "user_id": 7,
+            "leader_id": 5
+        }
+    ],
+    "settings": {
+        "maxDuration": 3600
+    },
+    "content": [
+        {
+            "videoContentId": 1,
+            "name": "Great video",
+            "path": {
+                "String": "123456"
+            },
+            "description": "Go language tutorial",
+            "duration": 3600,
+            "leaderId": 3
+        },
+        {
+            "videoContentId": 2,
+            "name": "Great video 2",
+            "path": {
+                "String": "123456"
+            },
+            "description": "Go language tutorial 2",
+            "duration": 3600,
+            "leaderId": 5
+        },
+        {
+            "videoContentId": 3,
+            "name": "Great video",
+            "path": {
+                "String": "123456"
+            },
+            "description": "Go language tutorial",
+            "duration": 3600,
+            "leaderId": 3
+        }
+    ],
+    "shares": [
+        {
+            "id": 1,
+            "memberId": 6,
+            "url": "http://great-video.mp4",
+            "content_id": 1,
+            "message": "Great messages"
+        },
+        {
+            "id": 2,
+            "memberId": 4,
+            "url": "http://great-video.mp4",
+            "content_id": 3,
+            "message": "Great messages"
+        }
+    ]
+}

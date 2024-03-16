@@ -1,0 +1,4087 @@
+{
+	"info": {
+		"_postman_id": "2625c3b0-1abe-cb35-34d2-179678617354",
+		"name": "neli",
+		"description": "This collections is build for testing neli web services for N7 prototype",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "/auth/login FAILURE (bad password)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.code).to.eql(401);",
+									"    pm.expect(jsonData.message).to.eql(\"invalid login and/or password\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"arnaud\",\n\t\"password\": \"arnaud\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Test post method /auth/login with bad password"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/login FAILURE (bad ttl)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 400)",
+									"    pm.response.to.have.jsonBody('message', 'Invalid parameters')",
+									"});",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"{{login}}\",\n\t\"password\": \"{{password}}\",\n\t\"ttl\": \"ttl\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Test post method /auth/login with bad ttl value (string)"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/login SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('accessToken')",
+									"    pm.response.to.have.jsonBody('accessTokenExpires')",
+									"    pm.response.to.have.jsonBody('refreshToken')",
+									"    pm.response.to.have.jsonBody('refreshTokenExpires')",
+									"});",
+									"",
+									"pm.test(\"Expires date is less than 30 minutes\", function () {",
+									"    var now = new Date().getTime();",
+									"    var data = JSON.parse(responseBody);",
+									"    var expiresAt = new Date(data.accessTokenExpires).getTime();",
+									"    var difference = expiresAt - now;",
+									"    ",
+									"    // Tokenlike in milliseconds",
+									"    var tokenLife = parseInt(pm.variables.get(\"token_life\")) * 1000;",
+									"    ",
+									"    pm.expect(difference).to.be.below(tokenLife);",
+									"});",
+									"",
+									"pm.test(\"Expires date are equals\", function () {",
+									"    var data = JSON.parse(responseBody);",
+									"    pm.expect(data.accessTokenExpires).to.equal(data.refreshTokenExpires);",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"{{login}}\",\n\t\"password\": \"{{password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Test post method /auth/login with good credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/login SUCCESS with ttl",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "08892c65-e341-4440-b45e-98355ee0e695",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('accessToken')",
+									"    pm.response.to.have.jsonBody('accessTokenExpires')",
+									"    pm.response.to.have.jsonBody('refreshToken')",
+									"    pm.response.to.have.jsonBody('refreshTokenExpires')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"{{login}}\",\n\t\"password\": \"{{password}}\",\n\t\"ttl\": 900\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Test post method /auth/login with good credentials with ttl"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/refresh FAILURE (bad token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 401)",
+									"    pm.response.to.have.jsonBody('message', 'Invalid token')",
+									"});",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{expired_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/auth/refresh",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Test post method /auth/refresh with bad token"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/refresh SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('accessToken')",
+									"    pm.response.to.have.jsonBody('accessTokenExpires')",
+									"    pm.response.to.have.jsonBody('refreshToken')",
+									"    pm.response.to.have.jsonBody('refreshTokenExpires')",
+									"});",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{refresh_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/auth/refresh",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Test post method /auth/refresh with refresh token"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/reset-password FAILURE (with bad username)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    pm.response.to.have.body(\"\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"bad_username\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/reset-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						},
+						"description": "Test post method /auth/reset-password with bad username"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/reset-password SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Call mailhog API for setting token\", function () {",
+									"    pm.response.to.have.body(\"\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"login\": \"{{login}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/reset-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						},
+						"description": "Test post method /auth/reset-password success"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/set-password FAILURE (bad token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    pm.response.to.have.body(\"\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"newPassword\": \"newPassword\",\n\t\"setPasswordToken\": \"setPasswordToken\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/set-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"set-password"
+							]
+						},
+						"description": "Test post method /auth/set-password without token"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/set-password SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "49c5d590-722f-42cb-b968-df9f701af5ac",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"newPassword\": \"{{password}}\",\n\t\"setPasswordToken\": \"passwordtoken\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/auth/set-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"set-password"
+							]
+						},
+						"description": "Test post method /auth/set-password without token"
+					},
+					"response": []
+				},
+				{
+					"name": "/auth/refresh FAILURE (access token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 401)",
+									"    pm.response.to.have.jsonBody('message', 'Invalid token')",
+									"});",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/auth/refresh",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Test post method /auth/refresh with bad token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "/users/administrator FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						},
+						"description": "Get access token for simple user for testing role in next test"
+					},
+					"response": []
+				},
+				{
+					"name": "/users/administrator FAILURE (no access token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 401)",
+									"    pm.response.to.have.jsonBody('message','Invalid token')",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						},
+						"description": "Get access token for simple user for testing role in next test"
+					},
+					"response": []
+				},
+				{
+					"name": "/users/administrator FAILURE (same login)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d9d66bc5-5ca6-47c1-b0fc-be6272f2a06d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 400)",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"admin@neli.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						},
+						"description": "Get access token for simple user for testing role in next test"
+					},
+					"response": []
+				},
+				{
+					"name": "/users/administrator SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5111ad6c-5ef7-45b4-aa59-2afcdfceee53",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('resource')",
+									"    pm.response.to.have.jsonBody('resource.login')",
+									"    pm.response.to.have.jsonBody('resource.userId')",
+									"    pm.response.to.have.jsonBody('resource.profile','administrator')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/leader FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"email\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/leader",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"leader"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/leader SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('resource')",
+									"    pm.response.to.have.jsonBody('resource.userId')",
+									"    pm.response.to.have.jsonBody('resource.profile','leader')",
+									"});",
+									"",
+									"",
+									"const jsonData = pm.response.json();",
+									"const mailhog = pm.environment.get('mailhog');",
+									"",
+									"pm.sendRequest(mailhog, function (err,res,body) {",
+									"    pm.test(\"Error should be null\", function () {",
+									"       pm.expect(err).to.equal(null);",
+									"    });",
+									"    ",
+									"    if (err) {",
+									"        return;",
+									"    }",
+									"    const json = res.json();",
+									"    const b = json.items[0].Content.Body;",
+									"    let startPos = b.indexOf(\"Login: \")+\"Login: \".length;",
+									"    let endPos = startPos + 6 ;",
+									"    const login = b.substring(startPos,endPos).trim();",
+									"",
+									"    startPos = b.indexOf(\"Password: \")+\"Password: \".length;",
+									"    endPos = startPos + 6 ;",
+									"    const password = b.substring(startPos,endPos).trim();",
+									" ",
+									"    pm.test(\"Email data are correct\", function () {",
+									"        pm.expect(login).to.not.be.empty;",
+									"        pm.expect(password).to.not.be.empty;",
+									"    });",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/leader",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"leader"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/member FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/member",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"member"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/member SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ae099d4f-9802-4982-8de1-baf235c192c1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('resource')",
+									"    pm.response.to.have.jsonBody('resource.userId')",
+									"    pm.response.to.have.jsonBody('resource.profile','member')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/member",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"member"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/me SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e08ffc2d-2e40-4eab-94d4-41ccbced2c38",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('userId')",
+									"    pm.response.to.have.jsonBody('email')",
+									"    pm.response.to.have.jsonBody('lastName')",
+									"    pm.response.to.have.jsonBody('firstName')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "{{member_email}}",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/me",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/administrator FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "email",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/administrator SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02c7767e-999d-4892-bbce-cb2d9a08b85b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(jsonData[0]).to.have.property('lastName');",
+									"    pm.expect(jsonData[0]).to.have.property('email');",
+									"    pm.expect(jsonData[0]).to.have.property('userId');",
+									"    pm.expect(jsonData[0]).to.have.property('firstName');",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "{{member_email}}",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/administrator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"administrator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/leader FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "email",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/leader",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"leader"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/leader SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02c7767e-999d-4892-bbce-cb2d9a08b85b",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(jsonData[0]).to.have.property('lastName');",
+									"    pm.expect(jsonData[0]).to.have.property('email');",
+									"    pm.expect(jsonData[0]).to.have.property('userId');",
+									"    pm.expect(jsonData[0]).to.have.property('firstName');",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "{{member_email}}",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/leader",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"leader"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/member FAILURE (invalid role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "email",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/member",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"member"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/member SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6802accf-694d-4664-afd6-2729f4fea670",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(jsonData[0]).to.have.property('lastName');",
+									"    pm.expect(jsonData[0]).to.have.property('email');",
+									"    pm.expect(jsonData[0]).to.have.property('userId');",
+									"    pm.expect(jsonData[0]).to.have.property('firstName');",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "{{member_email}}",
+									"type": "text"
+								},
+								{
+									"key": "firstname",
+									"value": "firstname",
+									"type": "text"
+								},
+								{
+									"key": "lastname",
+									"value": "lastname",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/member",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"member"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId} FAILURE (invalid role with admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"email@email.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId} FAILURE (invalid role with leader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{member_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{uuid}}@neli.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with admin nothing changed)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "93073881-5c12-409c-97c4-9d49fa056e3c",
+								"exec": [
+									"pm.test(\"Status code is 304\", function () {",
+									"    pm.response.to.have.status(304);",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"leader\",\n\t\"lastName\": \"leader\",\n\t\"email\": \"leader@neli.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) FAILURE (emails exists)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8c2e0ea9-7c35-484b-a2ef-2f66520e7c31",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 400)",
+									"    pm.response.to.have.jsonBody('message',\"Email already exists\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"leader\",\n\t\"lastName\": \"leader\",\n\t\"email\": \"zombie@neli.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with self user)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with leader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"firstname\",\n\t\"lastName\": \"lastname\",\n\t\"email\": \"{{$guid}}@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/users/4",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) FAILED (invalid role with admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/users/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/users/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) FAILED (invalid role with leader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/users/7",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/{userId) SUCCESS (with leader)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/users/6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/change-password FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"oldPassword\": \"{{$guid}}\",\n\t\"newPassword\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/change-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/change-password SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"oldPassword\": \"{{password}}\",\n\t\"newPassword\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/change-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Content",
+			"item": [
+				{
+					"name": "/video-content/id SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('videoContentId')",
+									"    pm.response.to.have.jsonBody('maxDuration')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/video-content/id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/max-duration SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"maxDuration\": 3600\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/max-duration",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"max-duration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId} FAILED (not found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 404)",
+									"    pm.response.to.have.jsonBody('message', 'invalid videoContentId')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"{{$guid}}\",\n\t\"description\": \"{{$guid}}\",\n\t\"duration\": 3600\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId} SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"{{$guid}}\",\n\t\"description\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share/{userId} FAILED (user not in tribe)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 404)",
+									"    pm.response.to.have.jsonBody('message', 'invalid userId or videoContentId')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"{{$guid}}\",\n\t\"expirationDate\": \"2017-11-26T08:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/share/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"share",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share/{userId} FAILED (content not found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 404)",
+									"    pm.response.to.have.jsonBody('message', 'invalid userId or videoContentId')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"{{$guid}}\",\n\t\"expirationDate\": \"2017-11-26T08:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/123456789/share/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"123456789",
+								"share",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share/{userId} SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "be5e0651-f0c6-4bdf-9329-3390f35de4a3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"{{$guid}}\",\n  \"expirationDate\": \"2018-11-26T08:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/share/4",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"share",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share FAILED (user not in tribe)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "03b53956-e39c-4fed-9f71-307d0004657e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 404)",
+									"    pm.response.to.have.jsonBody('message', 'invalid userId(s) or videoContentId')",
+									"    pm.response.to.have.jsonBody('ids',[1])",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"{{$guid}}\",\n\t\"expirationDate\": \"2017-11-26T08:00:00Z\",\n\t\"ids\": [1]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/share",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"share"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share FAILED (content not found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ae750a77-1e63-4f7f-ab59-1b11d7e2f600",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 404)",
+									"    pm.response.to.have.jsonBody('message', 'invalid userId(s) or videoContentId')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"{{$guid}}\",\n\t\"expirationDate\": \"2017-11-26T08:00:00Z\",\n\t\"ids\": [4]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/123456789/share",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"123456789",
+								"share"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "be5e0651-f0c6-4bdf-9329-3390f35de4a3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"{{$guid}}\",\n\t\"expirationDate\": \"2017-11-26T08:00:00Z\",\n\t\"ids\": [4]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/share",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"share"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/max-duration SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c950bda-9f98-46ba-9528-d9b7263988b9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var data = JSON.parse(responseBody);   ",
+									"    pm.expect(data).to.have.property('maxDuration')",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "expirationDate",
+									"value": "2017-11-26T08:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "{{$guid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/video-content/max-duration",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"max-duration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "490984f0-9e9a-47cd-852f-f4436973f33f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"}); ",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var data = JSON.parse(responseBody);   ",
+									"    pm.expect(data[0]).to.have.property('videoContentId',4)",
+									"    pm.expect(data[0]).to.have.property('name')",
+									"    pm.expect(data[0]).to.have.property('description')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "key=AAAA1tNfERI:APA91bEZwjt9ajGiuMv0_J-DGxXN26hojOMDiOljQD9Q18nf6nPXvi6PtbL7GXfkFvJk_Sy6mPg0AFNCJuipmgFAO-3c2x8BJWsHUMmq2lzJ_qXNeeDsXXj3ZIiRlOuLXp_dXKfwIym5sMSYroNq-LH492Ot_wUhrA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notification\": {\n        \"title\": \"Firebasee\",\n        \"body\": \"Firebase is awesome\"\n    },\n    \"to\": \"fzCQv7tdyaA:APA91bFH-_SwO9r9kuh71XdWEGMCVxTfGqTtregqFVA_ZhuLHzkZJZo58AeOuWc78o7WTxkTEsGnPoO9Pxsz4NW_7lL6yfxJ8w0n18ctKgXuxgbYFIOmIT4hzik_T9B5umlhN0sDgiM\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "expirationDate",
+									"value": "2017-11-26T08:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "{{$guid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/video-content",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/all FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "expirationDate",
+									"value": "2017-11-26T08:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "{{$guid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/video-content/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"all"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/all SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c41f62f8-5736-4024-aab8-a187236cc7f3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var data = JSON.parse(responseBody);   ",
+									"    pm.expect(data[0]).to.have.property('videoContentId',1)",
+									"    pm.expect(data[0]).to.have.property('sharingStatus', true)",
+									"    pm.expect(data[0]).to.have.property('creationDate')",
+									"    pm.expect(data[0]).to.have.property('leaderId')",
+									"    pm.expect(data[0]).to.have.property('ready')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "expirationDate",
+									"value": "2017-11-26T08:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "{{$guid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/video-content/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"all"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/share SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8f2ebe2-44b2-4587-8eac-d0f47af2765c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var data = JSON.parse(responseBody);   ",
+									"    pm.expect(data[0]).to.have.property('memberId')",
+									"    pm.expect(data[0]).to.have.property('message')",
+									"    pm.expect(data[0]).to.have.property('expirationDate')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "expirationDate",
+									"value": "2017-11-26T08:00:00Z",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "{{$guid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/share",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"share"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId} FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/video-content/99",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"99"
+							]
+						},
+						"description": "Video not found"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId} FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message',\"This action cannot be performed by this user\")",
+									"",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{super_admin_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/video-content/99",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"99"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId} SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{leader_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/video-content/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/ready FAILED",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b9c82490-7d97-455f-8244-d4553c07dda4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"pm.test(\"JSON data are correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.response.to.have.jsonBody('code', 403)",
+									"    pm.response.to.have.jsonBody('message', 'This action cannot be performed by this user')",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{administrator_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"randomString\": \"{{$guid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/ready",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"ready"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				},
+				{
+					"name": "/video-content/{videoContentId}/ready SUCCESS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "279f3c82-927a-4f6d-bb60-7400ee5edb7e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204)",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=UTF-8\");",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiaHViIiwidXNlciI6MTAwfQ.jwbr4xgLY_N655anUVWiDHveMFiFv6P6AZ28E1YqEYY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"randomString\": \"{{$guid}}\",\n\t\"duration\": 10\n}"
+						},
+						"url": {
+							"raw": "{{url}}/video-content/1/ready",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"video-content",
+								"1",
+								"ready"
+							]
+						},
+						"description": "Bad role"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
